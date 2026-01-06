@@ -1,0 +1,30 @@
+.DS_Store
+
+# IDE
+.idea/
+*.iml
+
+# Flutter/Dart
+.dart_tool/
+.packages
+.pub-cache/
+.pub/
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+.metadata
+
+# Platform builds
+**/ios/Flutter/Flutter.framework
+**/ios/Flutter/Flutter.podspec
+**/ios/Flutter/App.framework
+**/ios/Flutter/engine/
+**/ios/Flutter/flutter_export_environment.sh
+**/android/.gradle/
+**/android/local.properties
+
+# Logs
+*.log
+
+# PRD / large artifacts
+Betsy.pdf
