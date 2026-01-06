@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/app_theme.dart';
 
+/// Streak card with "Steady Stride" aesthetic.
+/// 
+/// Bold, confident, direct. Strong visual impact.
+/// Deep slate with bold amber accent.
 class StreakCard extends StatefulWidget {
   final int currentStreak;
   final bool hasFreezeDays;
@@ -17,161 +21,208 @@ class StreakCard extends StatefulWidget {
   State<StreakCard> createState() => _StreakCardState();
 }
 
-class _StreakCardState extends State<StreakCard> with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
-  late Animation<double> _scaleAnimation;
+class _StreakCardState extends State<StreakCard> 
+    with SingleTickerProviderStateMixin {
+  late AnimationController _breathingController;
   late Animation<double> _glowAnimation;
-  late Animation<double> _pulseAnimation;
 
   @override
   void initState() {
     super.initState();
-    _animationController = AnimationController(
-      duration: const Duration(seconds: 2),
+    // Gentle breathing glow - subtle, not distracting
+    _breathingController = AnimationController(
+      duration: AppTheme.animationBreathing,
       vsync: this,
     )..repeat(reverse: true);
     
-    _scaleAnimation = Tween<double>(
-      begin: 1.0,
-      end: 1.05,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ));
-    
     _glowAnimation = Tween<double>(
-      begin: 0.5,
+      begin: 0.0,
       end: 1.0,
     ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ));
-    
-    _pulseAnimation = Tween<double>(
-      begin: 0.95,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
+      parent: _breathingController,
+      curve: AppTheme.curveBreathing,
     ));
   }
 
   @override
   void dispose() {
-    _animationController.dispose();
+    _breathingController.dispose();
     super.dispose();
   }
 
-  String _getStreakMessage() {
-    if (widget.currentStreak == 0) return 'Start your journey today!';
-    if (widget.currentStreak == 1) return 'Great start! Keep it up!';
-    if (widget.currentStreak < 7) return 'You\'re building momentum!';
-    if (widget.currentStreak < 30) return 'Amazing consistency!';
-    return 'You\'re unstoppable!';
+  // Direct, confident messages
+  String _getBoldMessage() {
+    if (widget.currentStreak == 0) return 'Start strong today.';
+    if (widget.currentStreak == 1) return 'Day one. Let\'s go.';
+    if (widget.currentStreak < 7) return 'Building momentum.';
+    if (widget.currentStreak < 14) return 'Solid week. Keep pushing.';
+    if (widget.currentStreak < 30) return 'You\'re on a roll.';
+    return 'Unstoppable.';
+  }
+
+  // Bold, strong icons
+  String _getStreakIcon() {
+    if (widget.currentStreak < 7) return '💪';
+    if (widget.currentStreak < 14) return '🔥';
+    if (widget.currentStreak < 30) return '⚡';
+    if (widget.currentStreak < 60) return '🏆';
+    return '👑';
   }
 
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: _animationController,
+      animation: _glowAnimation,
       builder: (context, child) {
-        return Transform.scale(
-          scale: _scaleAnimation.value,
-          child: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  AppTheme.warmCoral.withOpacity(0.9),
-                  AppTheme.sunsetOrange,
-                  AppTheme.peachPuff,
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                stops: const [0.0, 0.5, 1.0],
-              ),
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: [
-                BoxShadow(
-                  color: AppTheme.warmCoral.withOpacity(0.3 * _glowAnimation.value),
-                  blurRadius: 20,
-                  offset: const Offset(0, 8),
-                ),
-              ],
+        return Container(
+          decoration: BoxDecoration(
+            gradient: AppTheme.vibrantDarkGradient,
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(
+              color: AppTheme.electricCyan.withValues(alpha: 0.35),
+              width: 1,
             ),
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                onTap: () {
-                  // Show streak details
-                },
-                borderRadius: BorderRadius.circular(20),
-                child: Padding(
-                  padding: const EdgeInsets.all(AppTheme.spacingL),
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Text(
-                                    '🔥',
-                                    style: TextStyle(
-                                      fontSize: 40,
-                                      shadows: [
-                                        Shadow(
-                                          color: Colors.orange.withOpacity(0.5),
-                                          blurRadius: 10,
-                                        ),
-                                      ],
-                                    ),
+            boxShadow: [
+              BoxShadow(
+                color: AppTheme.slate.withValues(
+                  alpha: 0.25 + (0.1 * _glowAnimation.value),
+                ),
+                blurRadius: 16 + (4 * _glowAnimation.value),
+                offset: const Offset(0, 6),
+              ),
+              BoxShadow(
+                color: AppTheme.electricCyan.withValues(
+                  alpha: 0.18 + (0.12 * _glowAnimation.value),
+                ),
+                blurRadius: 18 + (10 * _glowAnimation.value),
+                offset: const Offset(0, 10),
+              ),
+              BoxShadow(
+                color: AppTheme.hotMagenta.withValues(
+                  alpha: 0.12 + (0.1 * _glowAnimation.value),
+                ),
+                blurRadius: 22 + (10 * _glowAnimation.value),
+                offset: const Offset(0, 12),
+              ),
+            ],
+          ),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: () {},
+              borderRadius: BorderRadius.circular(24),
+              child: Padding(
+                padding: const EdgeInsets.all(AppTheme.spacingL),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Main streak display
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        // Organic icon
+                        Text(
+                          _getStreakIcon(),
+                          style: const TextStyle(fontSize: 44),
+                        ),
+                        const SizedBox(width: AppTheme.spacingM),
+                        
+                        // Streak number
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.baseline,
+                              textBaseline: TextBaseline.alphabetic,
+                              children: [
+                                Text(
+                                  widget.currentStreak.toString(),
+                                  style: TextStyle(
+                                    fontSize: 52,
+                                    fontWeight: FontWeight.w300,
+                                    color: Colors.white,
+                                    height: 1.0,
+                                    letterSpacing: -2,
                                   ),
-                                  const SizedBox(width: AppTheme.spacingS),
-                                  Text(
-                                    widget.currentStreak.toString(),
-                                    style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 48,
-                                    ),
-                                  ),
-                                  const SizedBox(width: AppTheme.spacingS),
-                                  Text(
-                                    widget.currentStreak == 1 ? 'day' : 'days',
-                                    style: const TextStyle(
-                                      fontSize: 24,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: AppTheme.spacingS),
-                              Text(
-                                _getStreakMessage(),
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w400,
                                 ),
-                              ),
-                            ],
-                          ),
-                          if (widget.hasFreezeDays)
-                            _FreezeIndicator(
-                              freezeDaysRemaining: widget.freezeDaysRemaining,
+                                const SizedBox(width: 8),
+                                Text(
+                                  widget.currentStreak == 1 ? 'day' : 'days',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w400,
+                                    color: Colors.white.withValues(alpha: 0.9),
+                                  ),
+                                ),
+                              ],
                             ),
+                            Text(
+                              'of gentle movement',
+                              style: TextStyle(
+                                fontSize: 15,
+                                color: Colors.white.withValues(alpha: 0.8),
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ],
+                        ),
+                        
+                        const Spacer(),
+                        
+                        // Rest days (not "freeze" - warmer language)
+                        if (widget.hasFreezeDays)
+                          _RestDaysIndicator(
+                            daysRemaining: widget.freezeDaysRemaining,
+                          ),
+                      ],
+                    ),
+                    
+                    const SizedBox(height: AppTheme.spacingL),
+                    
+                    // Warm message
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppTheme.spacingM,
+                        vertical: AppTheme.spacingS + 4,
+                      ),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            AppTheme.electricCyan.withValues(alpha: 0.28),
+                            AppTheme.hotMagenta.withValues(alpha: 0.22),
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.15),
+                          width: 1,
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.format_quote_rounded,
+                            color: Colors.white.withValues(alpha: 0.6),
+                            size: 20,
+                          ),
+                          const SizedBox(width: AppTheme.spacingS),
+                          Expanded(
+                            child: Text(
+                              _getBoldMessage(),
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w500,
+                                height: 1.4,
+                              ),
+                            ),
+                          ),
                         ],
                       ),
-                      if (widget.currentStreak > 0) ...[
-                        const SizedBox(height: AppTheme.spacingM),
-                        _StreakProgress(currentStreak: widget.currentStreak),
-                      ],
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -182,100 +233,48 @@ class _StreakCardState extends State<StreakCard> with SingleTickerProviderStateM
   }
 }
 
-class _FreezeIndicator extends StatelessWidget {
-  final int freezeDaysRemaining;
+/// Rest days indicator - gentler language than "freeze"
+class _RestDaysIndicator extends StatelessWidget {
+  final int daysRemaining;
 
-  const _FreezeIndicator({required this.freezeDaysRemaining});
+  const _RestDaysIndicator({required this.daysRemaining});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppTheme.spacingM,
-              vertical: AppTheme.spacingS,
-            ),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Column(
-              children: [
-                const Text(
-                  '❄️',
-                  style: TextStyle(fontSize: 24),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  '$freezeDaysRemaining',
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-                const Text(
-                  'freeze days',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
-            ),
-          );
-  }
-}
-
-class _StreakProgress extends StatelessWidget {
-  final int currentStreak;
-
-  const _StreakProgress({required this.currentStreak});
-
-  int _getNextMilestone() {
-    if (currentStreak < 7) return 7;
-    if (currentStreak < 30) return 30;
-    if (currentStreak < 100) return 100;
-    return ((currentStreak ~/ 100) + 1) * 100;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final nextMilestone = _getNextMilestone();
-    final progress = currentStreak / nextMilestone;
-
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'Next milestone',
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.white.withOpacity(0.9),
-              ),
-            ),
-            Text(
-              '$nextMilestone days',
-              style: const TextStyle(
-                fontSize: 14,
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: AppTheme.spacingS),
-        ClipRRect(
-          borderRadius: BorderRadius.circular(8),
-          child: LinearProgressIndicator(
-            value: progress,
-            minHeight: 8,
-            backgroundColor: Colors.white.withOpacity(0.2),
-            valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppTheme.spacingM,
+        vertical: AppTheme.spacingS,
+      ),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.2),
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            '☕',
+            style: const TextStyle(fontSize: 22),
           ),
-        ),
-      ],
+          const SizedBox(height: 2),
+          Text(
+            '$daysRemaining',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: Colors.white,
+            ),
+          ),
+          Text(
+            'rest days',
+            style: TextStyle(
+              fontSize: 11,
+              color: Colors.white.withValues(alpha: 0.85),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
