@@ -164,7 +164,7 @@ class StoryCard extends StatelessWidget {
                         vertical: AppTheme.spacingS,
                       ),
                       decoration: BoxDecoration(
-                        gradient: AppTheme.vibrantGradient,
+                        color: AppTheme.electricCyan,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Row(

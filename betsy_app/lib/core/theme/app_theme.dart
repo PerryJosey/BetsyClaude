@@ -295,19 +295,19 @@ class AppTheme {
     end: Alignment.bottomRight,
   );
 
-  /// Vibrant gradient (use for CTAs and key highlights)
+  /// Vibrant gradient (use for CTAs and key highlights) - cyan to amber
   static LinearGradient get vibrantGradient => const LinearGradient(
-    colors: [electricCyan, hotMagenta],
+    colors: [electricCyan, amber],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
-  /// Vibrant "dark" gradient for surfaces like StreakCard
+  /// Vibrant "dark" gradient for surfaces like StreakCard - slate with cyan edge
   static LinearGradient get vibrantDarkGradient => LinearGradient(
-    colors: [slateDark, slate, electricCyanDark],
+    colors: [slateDark, slate, electricCyanDark.withValues(alpha: 0.85)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    stops: const [0.0, 0.6, 1.0],
+    stops: const [0.0, 0.7, 1.0],
   );
   
   /// Sage gradient for success/completion

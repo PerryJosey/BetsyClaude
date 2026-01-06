@@ -76,33 +76,17 @@ class _StreakCardState extends State<StreakCard>
       builder: (context, child) {
         return Container(
           decoration: BoxDecoration(
-            gradient: AppTheme.vibrantDarkGradient,
+            color: AppTheme.slate,
             borderRadius: BorderRadius.circular(24),
             border: Border.all(
-              color: AppTheme.electricCyan.withValues(alpha: 0.35),
-              width: 1,
+              color: AppTheme.electricCyan.withValues(alpha: 0.4),
+              width: 2,
             ),
             boxShadow: [
               BoxShadow(
-                color: AppTheme.slate.withValues(
-                  alpha: 0.25 + (0.1 * _glowAnimation.value),
-                ),
-                blurRadius: 16 + (4 * _glowAnimation.value),
+                color: AppTheme.slate.withValues(alpha: 0.3),
+                blurRadius: 16,
                 offset: const Offset(0, 6),
-              ),
-              BoxShadow(
-                color: AppTheme.electricCyan.withValues(
-                  alpha: 0.18 + (0.12 * _glowAnimation.value),
-                ),
-                blurRadius: 18 + (10 * _glowAnimation.value),
-                offset: const Offset(0, 10),
-              ),
-              BoxShadow(
-                color: AppTheme.hotMagenta.withValues(
-                  alpha: 0.12 + (0.1 * _glowAnimation.value),
-                ),
-                blurRadius: 22 + (10 * _glowAnimation.value),
-                offset: const Offset(0, 12),
               ),
             ],
           ),
@@ -186,19 +170,8 @@ class _StreakCardState extends State<StreakCard>
                         vertical: AppTheme.spacingS + 4,
                       ),
                       decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            AppTheme.electricCyan.withValues(alpha: 0.28),
-                            AppTheme.hotMagenta.withValues(alpha: 0.22),
-                          ],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
+                        color: Colors.white.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: Colors.white.withValues(alpha: 0.15),
-                          width: 1,
-                        ),
                       ),
                       child: Row(
                         children: [

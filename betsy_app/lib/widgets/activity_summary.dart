@@ -68,19 +68,8 @@ class ActivitySummary extends StatelessWidget {
                   vertical: AppTheme.spacingS,
                 ),
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      AppTheme.electricCyan.withValues(alpha: 0.18),
-                      AppTheme.hotMagenta.withValues(alpha: 0.14),
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
+                  color: AppTheme.slate,
                   borderRadius: BorderRadius.circular(14),
-                  border: Border.all(
-                    color: AppTheme.electricCyan.withValues(alpha: 0.35),
-                    width: 1,
-                  ),
                 ),
                 child: Row(
                   children: [
@@ -89,14 +78,14 @@ class ActivitySummary extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.w600,
-                        color: AppTheme.slateDark,
+                        color: Colors.white,
                       ),
                     ),
                     Text(
                       '/7',
                       style: TextStyle(
                         fontSize: 16,
-                        color: AppTheme.slateDark.withValues(alpha: 0.7),
+                        color: Colors.white.withValues(alpha: 0.7),
                       ),
                     ),
                   ],
@@ -139,19 +128,10 @@ class ActivitySummary extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(AppTheme.spacingM),
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  AppTheme.electricCyan.withValues(alpha: 0.16),
-                  AppTheme.hotMagenta.withValues(alpha: 0.12),
-                  AppTheme.amber.withValues(alpha: 0.10),
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                stops: const [0.0, 0.6, 1.0],
-              ),
+              color: AppTheme.gray100,
               borderRadius: BorderRadius.circular(14),
               border: Border.all(
-                color: AppTheme.electricCyan.withValues(alpha: 0.35),
+                color: AppTheme.gray200,
                 width: 1,
               ),
             ),
@@ -242,14 +222,9 @@ class _GardenDay extends StatelessWidget {
                 : null,
             boxShadow: isActive ? [
               BoxShadow(
-                color: AppTheme.success.withValues(alpha: 0.3),
+                color: AppTheme.success.withValues(alpha: 0.25),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
-              ),
-              BoxShadow(
-                color: AppTheme.electricCyan.withValues(alpha: 0.22),
-                blurRadius: 12,
-                offset: const Offset(0, 4),
               ),
             ] : null,
           ),
