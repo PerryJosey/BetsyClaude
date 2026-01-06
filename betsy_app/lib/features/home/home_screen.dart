@@ -71,41 +71,61 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           opacity: _fadeAnimation,
           child: CustomScrollView(
             slivers: [
-              // Custom App Bar with Greeting
+              // ═══════════════════════════════════════════════════════════
+              // HERO SECTION: Greeting + Streak (unified block)
+              // ═══════════════════════════════════════════════════════════
               SliverToBoxAdapter(
-                child: GreetingHeader(
-                  userName: userName,
-                  level: currentLevel,
-                ),
-              ),
-              
-              // Streak Card with gentle motivation
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingM),
-                  child: StreakCard(
-                    currentStreak: currentStreak,
-                    hasFreezeDays: true,
-                    freezeDaysRemaining: 2,
+                child: Container(
+                  margin: const EdgeInsets.only(bottom: AppTheme.spacingM),
+                  decoration: BoxDecoration(
+                    color: AppTheme.cardBackground,
+                    borderRadius: const BorderRadius.only(
+                      bottomLeft: Radius.circular(28),
+                      bottomRight: Radius.circular(28),
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppTheme.slate.withValues(alpha: 0.08),
+                        blurRadius: 16,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      GreetingHeader(
+                        userName: userName,
+                        level: currentLevel,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(
+                          AppTheme.spacingM,
+                          0,
+                          AppTheme.spacingM,
+                          AppTheme.spacingL,
+                        ),
+                        child: StreakCard(
+                          currentStreak: currentStreak,
+                          hasFreezeDays: true,
+                          freezeDaysRemaining: 2,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
               
-              // Quick Activity Logging Section
+              // ═══════════════════════════════════════════════════════════
+              // QUICK LOG SECTION
+              // ═══════════════════════════════════════════════════════════
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.all(AppTheme.spacingM),
+                  padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingM),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'How did you move today?',
-                        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          color: AppTheme.textPrimary,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(height: AppTheme.spacingM),
+                      _SectionHeader(title: 'Log Activity'),
+                      const SizedBox(height: AppTheme.spacingS),
                       ...quickActivities.map((activity) => Padding(
                         padding: const EdgeInsets.only(bottom: AppTheme.spacingS),
                         child: _QuickActivityButton(
@@ -113,7 +133,6 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                           onTap: () => _showQuickLogSheet(activity),
                         ),
                       )),
-                      const SizedBox(height: AppTheme.spacingS),
                       _MoreActivitiesButton(
                         onTap: () {
                           // Navigate to full activities list
@@ -124,38 +143,79 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                 ),
               ),
               
-              // Daily Story Section
+              // ═══════════════════════════════════════════════════════════
+              // STORY SECTION
+              // ═══════════════════════════════════════════════════════════
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingM),
-                  child: StoryCard(
-                    title: "Betsy's Morning Wisdom",
-                    preview: "At 87, I've learned that the best exercise is the one you actually do. This morning, I watered my petunias...",
-                    authorName: "Betsy",
-                    authorAge: 87,
-                    readTime: 3,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: AppTheme.spacingM),
+                      _SectionHeader(title: 'Daily Story'),
+                      const SizedBox(height: AppTheme.spacingS),
+                      StoryCard(
+                        title: "Betsy's Morning Wisdom",
+                        preview: "At 87, I've learned that the best exercise is the one you actually do. This morning, I watered my petunias...",
+                        authorName: "Betsy",
+                        authorAge: 87,
+                        readTime: 3,
+                      ),
+                    ],
                   ),
                 ),
               ),
               
-              // Weekly Activity Summary
+              // ═══════════════════════════════════════════════════════════
+              // WEEKLY SUMMARY SECTION
+              // ═══════════════════════════════════════════════════════════
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.all(AppTheme.spacingM),
-                  child: ActivitySummary(
-                    weekData: [true, true, false, true, true, true, true],
-                    totalActivities: 12,
-                    favoriteActivity: ActivityTypes.defaultActivities[0],
+                  padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingM),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: AppTheme.spacingM),
+                      _SectionHeader(title: 'This Week'),
+                      const SizedBox(height: AppTheme.spacingS),
+                      ActivitySummary(
+                        weekData: [true, true, false, true, true, true, true],
+                        totalActivities: 12,
+                        favoriteActivity: ActivityTypes.defaultActivities[0],
+                      ),
+                    ],
                   ),
                 ),
               ),
               
               // Bottom padding
               const SliverToBoxAdapter(
-                child: SizedBox(height: AppTheme.spacingXL),
+                child: SizedBox(height: AppTheme.spacingXL * 2),
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Section header with bold styling
+class _SectionHeader extends StatelessWidget {
+  final String title;
+
+  const _SectionHeader({required this.title});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: AppTheme.spacingS),
+      child: Text(
+        title,
+        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+          color: AppTheme.textPrimary,
+          fontWeight: FontWeight.w700,
         ),
       ),
     );
@@ -177,7 +237,7 @@ class _QuickActivityButton extends StatelessWidget {
       color: Colors.white,
       borderRadius: BorderRadius.circular(20),
       elevation: 2,
-      shadowColor: Colors.black.withOpacity(0.08),
+      shadowColor: Colors.black.withValues(alpha: 0.08),
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(20),
@@ -189,7 +249,7 @@ class _QuickActivityButton extends StatelessWidget {
                 width: 56,
                 height: 56,
                 decoration: BoxDecoration(
-                  color: activity.color.withOpacity(0.15),
+                  color: activity.color.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Center(
@@ -242,7 +302,7 @@ class _MoreActivitiesButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: AppTheme.lavenderMist.withOpacity(0.3),
+      color: AppTheme.gray100,
       borderRadius: BorderRadius.circular(20),
       child: InkWell(
         onTap: onTap,
