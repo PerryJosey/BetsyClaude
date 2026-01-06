@@ -1,9 +1,86 @@
+import 'dart:io';
 import 'package:flutter/foundation.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../core/config/supabase_config.dart';
 
 class AuthService {
   final SupabaseClient _client = SupabaseConfig.client;
+
+  /// Sign in with Google
+  Future<AuthResponse?> signInWithGoogle() async {
+    try {
+      final serverClientId = const String.fromEnvironment('GOOGLE_WEB_CLIENT_ID');
+      final googleSignIn = GoogleSignIn(
+        serverClientId: serverClientId.isNotEmpty ? serverClientId : null,
+        scopes: const ['email', 'profile'],
+      );
+
+      final account = await googleSignIn.signIn();
+      if (account == null) {
+        return null;
+      }
+
+      final authentication = await account.authentication;
+      final idToken = authentication.idToken;
+
+      if (idToken == null || idToken.isEmpty) {
+        throw AuthException('Sign-in failed. Please try again or use email.');
+      }
+
+      return await _client.auth.signInWithIdToken(
+        provider: OAuthProvider.google,
+        idToken: idToken,
+      );
+    } on AuthException {
+      rethrow;
+    } on SocketException {
+      throw AuthException('Unable to connect. Check your internet.');
+    } catch (e) {
+      throw AuthException('Sign-in failed. Please try again or use email.');
+    }
+  }
+
+  /// Sign in with Apple (iOS only)
+  Future<AuthResponse?> signInWithApple() async {
+    if (!Platform.isIOS) return null;
+
+    try {
+      final available = await SignInWithApple.isAvailable();
+      if (!available) {
+        throw AuthException('Apple Sign In is not available on this device.');
+      }
+
+      final credential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+      );
+
+      final idToken = credential.identityToken;
+      if (idToken == null || idToken.isEmpty) {
+        throw AuthException('Sign-in failed. Please try again or use email.');
+      }
+
+      return await _client.auth.signInWithIdToken(
+        provider: OAuthProvider.apple,
+        idToken: idToken,
+      );
+    } on SignInWithAppleAuthorizationException catch (e) {
+      if (e.code == AuthorizationErrorCode.canceled) {
+        return null;
+      }
+      throw AuthException('Sign-in failed. Please try again or use email.');
+    } on AuthException {
+      rethrow;
+    } on SocketException {
+      throw AuthException('Unable to connect. Check your internet.');
+    } catch (e) {
+      throw AuthException('Sign-in failed. Please try again or use email.');
+    }
+  }
 
   /// Sign up a new user with email, password, and name
   Future<AuthResponse> signUp(String email, String password, String name) async {

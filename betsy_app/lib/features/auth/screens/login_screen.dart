@@ -41,25 +41,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // Logo/Icon
-                  Container(
-                    width: 100,
-                    height: 100,
-                    decoration: BoxDecoration(
-                      color: AppTheme.slate,
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.favorite_rounded,
-                      size: 50,
-                      color: Colors.white,
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  
                   // Title
                   Text(
-                    'Welcome to Betsy',
+                    "Let's Go Betsy",
                     style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                       fontWeight: FontWeight.w700,
                       color: AppTheme.textPrimary,
@@ -74,7 +58,26 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 48),
+                  
+                  // Betsy GIF
+                  Center(
+                    child: Container(
+                      width: MediaQuery.sizeOf(context).width * 0.6,
+                      height: MediaQuery.sizeOf(context).width * 0.6,
+                      constraints: const BoxConstraints(maxWidth: 200, maxHeight: 200),
+                      decoration: BoxDecoration(
+                        color: AppTheme.backgroundLight,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      clipBehavior: Clip.antiAlias,
+                      child: Image.asset(
+                        'assets/images/betsy_transparent.webp',
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                  ),
+                  
+                  const SizedBox(height: 24),
                   
                   // Email field
                   TextFormField(
@@ -194,6 +197,51 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       ),
                     ),
                   ),
+                  
+                  const SizedBox(height: 32),
+                  
+                  // Divider
+                  Row(
+                    children: [
+                      Expanded(child: Divider(color: AppTheme.gray300)),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Text(
+                          'or',
+                          style: TextStyle(
+                            color: AppTheme.textMuted,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                      Expanded(child: Divider(color: AppTheme.gray300)),
+                    ],
+                  ),
+                  
+                  const SizedBox(height: 24),
+                  
+                  // Google Sign-In button
+                  OutlinedButton.icon(
+                    onPressed: _isLoading ? null : _handleGoogleSignIn,
+                    icon: Image.network(
+                      'https://www.google.com/favicon.ico',
+                      width: 24,
+                      height: 24,
+                      errorBuilder: (_, __, ___) => const Icon(Icons.g_mobiledata, size: 24),
+                    ),
+                    label: const Text(
+                      'Sign in with Google',
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      minimumSize: const Size(double.infinity, 56),
+                      side: BorderSide(color: AppTheme.gray300, width: 1),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      foregroundColor: AppTheme.textPrimary,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -242,6 +290,51 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Login failed: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _handleGoogleSignIn() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final authService = ref.read(authServiceProvider);
+      final response = await authService.signInWithGoogle();
+      
+      if (response != null && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Sign in successful!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+        context.go(RouteNames.home);
+      }
+    } on AuthException catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.message),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Google sign-in failed: $e'),
             backgroundColor: Colors.red,
           ),
         );
